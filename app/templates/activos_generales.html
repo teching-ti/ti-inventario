@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}Activos Generales{% endblock %}
+
+{% block content %}
+    <h1>Activos Generales</h1>
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#filtroModal" id="abrir-filtro">
+        <i class="fa-solid fa-filter"></i>
+    </button>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                   <th>Categoría</th>
+                   <th>Marca</th>
+                   <th>Modelo</th>
+                   <th>Cantidad Disponible</th>
+                   <th>Cantidad Total</th>
+                </tr>
+             </thead>
+             <tbody>
+                {% for activog in activo_general %}
+              <tr >
+                <td>{{ activog.categoria.nombre_categoria }}</td>
+                <td>{{ activog.marca.nombre_marca }}</td>
+                <td>{{ activog.modelo }}</td>
+                <td>{{ activog.cantidad_disponible }}</td>
+                <td>{{ activog.cantidad_total }}</td>
+              </tr>
+              {% endfor %}
+              </tbody>
+        </table>
+    </div>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarActivoGModal" id="boton-agregar">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+    <!-- Modal para activo general -->
+    <div class="modal fade" id="agregarActivoGModal" tabindex="-1" aria-labelledby="agregarActivoGLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarActivoGModalLabel">Agregar Actigo General</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('activos.agregar_activo_general') }}">
+                        {{ form.hidden_tag() }}  <!-- Añade campos ocultos para seguridad -->
+                        
+                        <div class="form-group">
+                            {{ form.categoria_id.label(class="form-label") }}
+                            {{ form.categoria_id(class="form-control") }}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.marca_id.label(class="form-label") }}
+                            {{ form.marca_id(class="form-control") }}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.modelo.label(class="form-label") }}
+                            {{ form.modelo(class="form-control") }}
+                        </div>
+
+                        <div class="form-group" id="form-nombre">
+                            {{ form.nombre.label(class="form-label") }}
+                            {{ form.nombre(class="form-control") }}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.cantidad_total.label(class="form-label") }}
+                            {{ form.cantidad_total(class="form-control") }}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.cantidad_disponible.label(class="form-label") }}
+                            {{ form.cantidad_disponible(class="form-control") }}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="filtroModal" tabindex="-1" aria-labelledby="filtroModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtroModalLabel">Filtrar por Categoría y Marca</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filtroForm">
+                        <div class="mb-3">
+                            <p for="categorias">Categorías:</p>
+                            <!-- Checkbox para categorías -->
+                            {% for categoria in categorias %}
+                            <label><input type="checkbox" name="categorias" value="{{ categoria.nombre_categoria }}"> {{ categoria.nombre_categoria }}</label><br>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <p for="marcas">Marcas:</p>
+                            <!-- Checkbox para marcas -->
+                            {% for marca in marcas %}
+                            <label><input type="checkbox" name="marcas" value="{{ marca.nombre_marca }}"> {{ marca.nombre_marca }}</label><br>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        #form-nombre{
+            display: none;
+        }
+
+        #abrir-filtro{
+            position: fixed;
+            border-radius: 50%;
+            height: 40px; 
+            right: 45px;
+            bottom: 190px;
+            box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+        }
+
+        #boton-agregar{
+            position: fixed;
+            border-radius: 50%;
+            height: 40px; 
+            right: 45px;
+            bottom: 120px;
+            box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+        }
+    </style>
+
+    <script>
+        // se obtiene el formulario de filtro para agregarle un evento del tipo submit
+        // ejecuta la funcion 'filtrarResultados' cuando se ejecute dicho evento
+        // termina ocultando el formulario
+        document.getElementById('filtroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            filtrarResultados();
+            $('#filtroModal').modal('hide');
+        });
+
+        //funcion para filtrar los resltados en base a la funcion obtenerSeleccion
+        function filtrarResultados() {
+            //se usan los resultados que cumplan con la condicion de contar con categorias
+            let categoriasSeleccionadas = obtenerSeleccion('categorias');
+            //se usan los resultados que cumplan con la condicion de contar con marcas
+            let marcasSeleccionadas = obtenerSeleccion('marcas');
+
+            // obtiene todos los elementos que sean del tipo tbody tr
+            let filas = document.querySelectorAll('tbody tr');
+            // filas al ser un arreglo ejecuta una función para cada elemento obtenido
+            filas.forEach(function(fila) {
+                // se obtiene el valor textual de cada elemento
+                let categoriaEnFila = fila.querySelector('td:nth-child(1)').textContent;
+                let marcaEnFila = fila.querySelector('td:nth-child(2)').textContent;
+
+                // devolverá un valor del tipo boolean
+                // compara el valor del texto obtenido por fila, existe dentro del arreglo obtenido en la funcion 'obtenerSeleccion()'
+                let categoriaCoincide = categoriasSeleccionadas.includes(categoriaEnFila) || categoriasSeleccionadas.includes('todos');
+                let marcaCoincide = marcasSeleccionadas.includes(marcaEnFila) || marcasSeleccionadas.includes('todos');
+
+                // condicion
+                if ((categoriasSeleccionadas.length === 0 || categoriaCoincide) && (marcasSeleccionadas.length === 0 || marcaCoincide)) {
+                    fila.style.display = 'table-row';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        }
+
+        //funcion para obtener a los checkbo que han sido seleccionados, estos valores se guaradan en un arreglo
+        function obtenerSeleccion(nombreCheckbox) {
+            let seleccion = [];
+            let checkboxes = document.querySelectorAll('input[name="' + nombreCheckbox + '"]:checked');
+            checkboxes.forEach(function(checkbox) {
+                seleccion.push(checkbox.value);
+            });
+            return seleccion;
+        }
+
+    </script>
+
+
+{% endblock %}

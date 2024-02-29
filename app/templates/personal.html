@@ -1,0 +1,148 @@
+{% extends 'base.html' %} 
+{% block title %}Lista de Personal{% endblock %} 
+
+{%block content %}
+    <h1>Personal Inventario</h1>
+    <div class="table-responsive">
+
+    <table class="table table-hover">
+      <thead class="table-dark">
+         <tr>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Cargo</th>
+            <th>*</th>
+         </tr>
+      </thead>
+      <tbody>
+      {% for empleado in personal %}
+      <tr>
+        <td>{{ empleado.nombres_completos }}</td>
+        <td>{{ empleado.departamento.nombre_departamento }}</td>
+        <td>{{ empleado.cargo.nombre_cargo }}</td>
+        <td><a href="{{ url_for('personal.asignar_activo', empleado_id=empleado.id_dni) }}"><i class="fa-solid fa-cubes fa-lg"></i></a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    <table>
+   </div>
+    
+   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarPersonalModal">Agregar Personal</button>
+    
+    <!-- Modal para agregar personal -->
+    <div class="modal fade" id="agregarPersonalModal" tabindex="-1" aria-labelledby="agregarPersonalModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-xl modal-dialog-scrollable">
+          <div class="modal-content">
+             <div class="modal-header">
+                <h5 class="modal-title" id="agregarPersonalModalLabel">Agregar Personal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+                <form method="POST" action="{{ url_for('personal.agregar_personal') }}">
+                   {{ form.hidden_tag() }}
+                   <div class="row">
+                      <div class="col">
+                         {{ form.id_dni.label(class="form-label") }} 
+                         {{ form.id_dni(class="form-control") }}
+                      </div>
+                      <div class="col">
+                         {{ form.nombres.label(class="form-label") }}
+                         {{ form.nombres(class="form-control") }}
+                      </div>
+                   </div>
+                   <div class="row">
+                      <div class="col">
+                         {{ form.apellido_p.label(class="form-label") }} 
+                         {{ form.apellido_p(class="form-control") }}
+                      </div>
+                      <div class="col">
+                         {{ form.apellido_m.label(class="form-label") }} 
+                         {{ form.apellido_m(class="form-control") }}
+                      </div>
+                   </div>
+                   <div class="form-group">
+                      {{ form.nombres_completos.label(class="form-label") }} 
+                      {{ form.nombres_completos(class="form-control", readonly=True) }}
+                   </div>
+                   <div class="row">
+                      <div class="col">
+                         {{ form.celular_personal.label(class="form-label") }} 
+                         {{ form.celular_personal(class="form-control") }}
+                      </div>
+                      <div class="col">
+                         {{ form.usuario.label(class="form-label") }} 
+                         {{ form.usuario(class="form-control") }}
+                      </div>
+                   </div>
+                   <div class="form-group">
+                      {{ form.departamento_id.label(class="form-label") }} {{
+                      form.departamento_id(class="form-control") }}
+                   </div>
+                   <div class="form-group">
+                      {{ form.cargo_id.label(class="form-label") }} {{
+                      form.cargo_id(class="form-control") }}
+                   </div>
+                   <div class="form-group">
+                      {{ form.fecha_registro.label(class="form-label") }} {{
+                      form.fecha_registro(class="form-control") }}
+                   </div>
+                   <div class="form-group" style="display: none;">
+                      {{ form.estado.label(class="form-label") }} {{
+                      form.estado(class="form-control") }}
+                   </div>
+                   <div class="form-group">
+                      {{ form.fecha_cese.label(class="form-label") }} {{
+                      form.fecha_cese(class="form-control") }}
+                   </div>
+                   <button type="submit" class="btn btn-primary mt-3">
+                      Agregar Personal
+                   </button>
+                </form>
+             </div>
+          </div>
+       </div>
+    </div>
+    
+    <script>
+       //Autocompletado el input nombres completos
+       document.addEventListener("DOMContentLoaded", function () {
+          const nombresInput = document.getElementById("{{ form.nombres.id }}");
+          const apellidoPInput = document.getElementById("{{ form.apellido_p.id }}");
+          const apellidoMInput = document.getElementById("{{ form.apellido_m.id }}");
+          const nombresCompletosInput = document.getElementById(
+             "{{ form.nombres_completos.id }}"
+          );
+    
+          [nombresInput, apellidoPInput, apellidoMInput].forEach((input) => {
+             input.addEventListener("input", () => {
+             const nombres = nombresInput.value;
+             const apellidoP = apellidoPInput.value;
+             const apellidoM = apellidoMInput.value;
+             nombresCompletosInput.value = `${nombres} ${apellidoP} ${apellidoM}`;
+             });
+          });
+       });
+    
+       //nuevo
+       let departamentoSelect = document.getElementById("{{ form.departamento_id.id }}");
+       departamentoSelect.addEventListener("change", function() {
+          let cargoSelect = document.getElementById("{{ form.cargo_id.id }}");
+          cargoSelect.innerHTML = ''; // Limpiar las opciones actuales del select de cargos
+          // Realizar la solicitud AJAX al servidor para obtener los cargos del departamento seleccionado
+          fetch(`/personal/cargos/${departamentoSelect.value}`)
+             .then(response => response.json())
+             .then(data => {
+                // Agregar las opciones de los cargos al select de cargos
+                data.forEach(cargo => {
+                   let option = document.createElement('option');
+                   option.text = cargo.nombre_cargo;
+                   option.value = cargo.id;
+                   cargoSelect.appendChild(option);
+                });
+             })
+             .catch(error => {
+                console.error('Error:', error);
+             });
+       });
+    </script>
+{% endblock %}

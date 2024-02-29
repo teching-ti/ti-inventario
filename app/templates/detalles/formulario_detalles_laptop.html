@@ -1,0 +1,31 @@
+<form id="segundoFormulario" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      <label for="procesador">Procesador</label>
+      {{ form.procesador(class="form-control") }}
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="almacenamiento">Almacenamiento</label>
+        {{ form.almacenamiento(class="form-control") }}
+      </div>
+      <div class="col">
+        <label for="tarjeta_video">Tarjeta de Video</label>
+        {{ form.tarjeta_video(class="form-control") }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="ram">RAM</label>
+        {{ form.ram(class="form-control") }}
+      </div>
+      <div class="col">
+        <label for="dimensiones">Dimensiones</label>
+        {{ form.dimensiones(class="form-control") }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="comentarios">Comentarios</label>
+      {{ form.comentarios(class="form-control") }}
+    </div>
+</form>  

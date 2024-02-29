@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Asignar Activo{% endblock %}
+
+{% block content %}
+  <h1>Asignar Activo</h1>
+  <p>Asignando a: {{ empleado.nombres_completos }}</p>
+  
+  <form method="POST" action="{{ url_for('personal.asignar_activo', empleado_id=empleado.id_dni) }}">
+    {{ form.hidden_tag() }}
+    
+    <div class="form-group">
+        <label for="categoria">Categoría</label>
+        <select class="form-control" id="categoria" name="categoria">
+            {% for categoria in categorias %}
+                <option value="{{ categoria.id }}">{{ categoria.nombre_categoria }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="marca">Marca</label>
+        <select class="form-control" id="marca" name="marca">
+            {% for marca in marcas %}
+                <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Asignar Activo</button>
+  </form>
+
+  <h2>Activos Disponibles</h2>
+  <ul>
+    {% for activo in activos_disponibles %}
+      <li>{{ activo.num_serie }} - {{ activo.modelo }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+<script>
+    // Obtener las marcas basadas en la categoría seleccionada
+    document.getElementById('categoria').addEventListener('change', function() {
+      var categoria_id = this.value;
+      var url = '/api/marcas/' + categoria_id;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          var marcaSelect = document.getElementById('marca');
+          marcaSelect.innerHTML = '<option value="">Seleccionar Marca</option>';
+
+          data.forEach(marca => {
+            var option = document.createElement('option');
+            option.value = marca.id;
+            option.textContent = marca.nombre_marca;
+            marcaSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Mostrar los activos disponibles cuando se envíe el formulario
+    document.getElementById('filtro-activo').addEventListener('change', function(event) {
+      event.preventDefault();
+
+      var categoria_id = document.getElementById('categoria').value;
+      var marca_id = document.getElementById('marca').value;
+      var url = '/api/activos-disponibles/' + empleado.id + '/' + categoria_id + '/' + marca_id;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          var activosDisponibles = document.getElementById('activos-disponibles');
+          activosDisponibles.innerHTML = '';
+
+          data.forEach(activo => {
+            var li = document.createElement('li');
+            li.textContent = activo.modelo;
+            activosDisponibles.appendChild(li);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    });
+  </script>

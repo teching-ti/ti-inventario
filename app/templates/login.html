@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center mt-5">
+    <div class="col-md-4 border rounded-4 shadow py-4 px-3">
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <h2 class="mb-4">Acceder</h2>
+            {{ form.hidden_tag() }}
+            <div class="form-floating mb-4">
+                {{ form.username(class="form-control", size=20, placeholder='-') }}
+                {{ form.username.label(for='username')}}
+            </div>
+            <div class="form-floating mb-4">
+                {{ form.password(type='password', class="form-control", size=20, placeholder='-')}}
+                {{ form.password.label(for='password')}}
+            </div>
+            <div>{{ form.submit(class='btn btn-primary') }}</div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+<form  id="segundoFormulario" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      <label for="dimensiones">Dimensiones</label>
+      {{ form.dimensiones(class="form-control") }}
+    </div>
+    <div class="form-group">
+      <label for="comentarios">Comentarios</label>
+      {{ form.comentarios(class="form-control") }}
+    </div>
+</form>

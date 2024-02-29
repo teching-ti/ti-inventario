@@ -1,0 +1,23 @@
+<form id="segundoFormulario" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      <label for="puertos_usb">Puertos USB</label>
+      {{ form.puertos_usb(class="form-control") }}
+    </div>
+    <div class="form-group">
+      <label for="numero_ventiladores">Número de Ventiladores</label>
+      {{ form.numero_ventiladores(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="dimensiones">Dimensiones</label>
+        {{ form.dimensiones(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="peso_maximo">Peso Máximo</label>
+        {{ form.peso_maximo(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="comentarios">Comentarios</label>
+        {{ form.comentarios(class="form-control") }}
+    </div>
+</form>  

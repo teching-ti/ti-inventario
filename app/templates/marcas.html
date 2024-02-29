@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+{% block title %}Teching Marcas{% endblock %}
+{% block content %}
+<h1>Marcas</h1>
+<ul>
+    {% for marca in marcas %}
+        <li>{{ marca.nombre_marca }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarMarcaModal">
+    Agregar Marca
+</button>
+
+<!-- Modal para agregar categoria -->
+<div class="modal fade" id="agregarMarcaModal" tabindex="-1" aria-labelledby="agregarMarcaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarMarcaModalLabel">Agregar Marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label for="{{ form.nombre_marca.id }}">Nombre Marca</label>
+                        {{ form.nombre_marca(class="form-control", id=form.nombre_marca.id) }}
+                    </div>
+                    <div class="modal-footer">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

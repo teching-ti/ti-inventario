@@ -1,0 +1,40 @@
+{% extends 'base.html'%}
+{% block title %}Teching Departamentos{% endblock %}
+{% block content %}
+<h1>Departamentos</h1>
+<ul>
+    {% for departamento in departamentos %}
+        <li>{{ departamento.nombre_departamento }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarDepartamentoModal">
+    Agregar Departamento
+</button>
+
+<!-- Modal para agregar departamento -->
+<div class="modal fade" id="agregarDepartamentoModal" tabindex="-1" aria-labelledby="agregarDepartamentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarDepartamentoModalLabel">Agregar Departamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label for="{{ form.nombre_departamento.id }}">Nombre del Departamento</label>
+                        {{ form.nombre_departamento(class="form-control", id=form.nombre_departamento.id) }}
+                    </div>
+                    <div class="modal-footer">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,278 @@
+<!-- agregar_activo.html -->
+{% extends "base.html" %}
+{% block content %}
+<br>
+<h1>Activos Específicos</h1>
+<br>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="table-dark">
+       <tr>
+          <th>N° Serie</th>
+          <th>Activo</th>
+          <th>N° de cargo</th>
+          <th>Ubicacion</th>
+          <th>Responsable</th>
+          <th>Estado</th>
+          <th class="h-acciones">Asignar</th>
+          <th class="h-acciones">Historial</th>
+       </tr>
+    </thead>
+    <tbody>
+      {% for activo in activos %}
+    <tr>
+      <td>{{ activo.num_serie }}</td>
+      <td>{{ activos_nombres.get(activo.activo_id, activo.activo_id) }}</td>
+      <td>{{ activo.nro_cargo }}</td>
+      <td>{{ departamentos_responsable.get(activo.ubicacion, activo.ubicacion) }}</td>
+      <td>{{ usuarios_responsables.get(activo.responsable, activo.responsable) }}</td>
+      <td>{{ activo.estado }}</td>
+      <td class="icon-acciones"><button class="btn btn-primary"><i class="fa-solid fa-sliders"></i></button></td>
+      <td class="icon-acciones"><button class="btn btn-success"><i class="fa-solid fa-clipboard-list"></i></button></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  <table>
+ </div>
+
+<button type="button" id="btn-agregar"  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarActivoModal"><i class="fa-solid fa-plus"></i></button>
+<!-- Modal para agregar activo -->
+<div class="modal fade" id="agregarActivoModal" tabindex="-1" aria-labelledby="agregarActivoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agregarActivoModalLabel">Nuevo Activo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container mt-4">
+          <form id="primerFormulario" method="POST" action="{{ url_for('activo.agregar_activo') }}">
+            {{ form.hidden_tag() }}
+            <div class="row">
+              <div class="col">
+                {{ form.categoria.label(class="form-control-label") }}
+                {{ form.categoria(class="form-control") }}
+              </div>
+              <div class="col">
+                {{ form.marca.label(class="form-control-label") }}
+                {{ form.marca(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.modelo.label(class="form-control-label") }}
+              {{ form.modelo(class="form-control") }}
+            </div>
+            <div class="row">
+              <div class="col">
+                {{ form.num_serie.label(class="form-control-label") }}
+                {{ form.num_serie(class="form-control") }}
+              </div>
+              <div class="col">
+                {{ form.nro_cargo.label(class="form-control-label") }}
+                {{ form.nro_cargo(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.ubicacion.label(class="form-control-label") }}
+              {{ form.ubicacion(class="form-control", id="ubicacion") }}
+            </div>
+            <div class="form-group">
+              {{ form.responsable.label(class="form-control-label") }}
+              {{ form.responsable(class="form-control") }}
+            </div>
+            <div class="row">
+              <div class="col">
+                {{ form.estado.label(class="form-control-label") }}
+                {{ form.estado(class="form-control") }}
+              </div>
+              <div class="col form-check contenedor-check">
+                {{ form.alquiler(class="form-check-input") }}
+                {{ form.alquiler.label(class="form-check-label") }}
+              </div>
+            </div>
+            <br>
+            <p class="d-inline-flex gap-1">
+              <a class="btn btn-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" id="btnDetalles">
+                Agregar Detalles
+              </a>
+            </p>
+            <br>
+          </form>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body" id="formContainer">Formulario de detalles</div>
+          </div>
+          <button id="btnGuardar" type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Funcionalidad para mostrar solo las opciones de modelos en base a la marca y categoría seleccionadas
+  let campoMarca = document.getElementById("marca");
+  let campoCategoria = document.getElementById("categoria");
+  let campoModelo = document.getElementById("modelo");
+
+  // Obtener todas las opciones de modelos
+  let opcionesModelo = campoModelo.querySelectorAll("option");
+
+  // Almacena los modelos originales antes de cualquier filtrado
+  let modelosOriginales = Array.from(opcionesModelo);
+
+  // Evento que se ejecutará cada vez que se realice un cambio de selección en el campo de marca o categoría
+  campoMarca.addEventListener("change", actualizarOpcionesModelo);
+  campoCategoria.addEventListener("change", actualizarOpcionesModelo);
+
+  // Función para actualizar las opciones de modelo basadas en la marca y categoría seleccionadas
+  function actualizarOpcionesModelo() {
+      // Se obtiene el valor del texto de la marca y la categoría seleccionadas
+      let marcaValor = campoMarca.options[campoMarca.selectedIndex].text;
+      let categoriaValor = campoCategoria.options[campoCategoria.selectedIndex].text;
+      
+      // Filtrar los modelos basados en la marca y categoría seleccionadas
+      let modelosFiltrados = modelosOriginales.filter(function(modelo){
+          return modelo.innerText.includes(marcaValor) && modelo.innerText.includes(categoriaValor);
+      });
+      
+      // Ocultar todas las opciones de modelos
+      opcionesModelo.forEach(function(opcion){
+          opcion.style.display = 'none';
+      });
+
+      // Mostrar solo las opciones de modelos filtradas
+      modelosFiltrados.forEach(function(modelo){
+          modelo.style.display = 'block';
+      });
+
+      // Limpiar el campo de modelo para evitar que quede el campo seleccionado con anterioridad
+      campoModelo.selectedIndex = 0;
+  }
+
+  /*-----------------*/
+  let campoUbicacion = document.getElementById("ubicacion");
+  //let campoResponsable = document.getElementById("responsable");
+
+  campoUbicacion.addEventListener("change", function(){
+    let campoResponsable = document.getElementById("responsable");
+    campoResponsable.innerHTML = ''
+
+    // Agregar la opción "Seleccionar Responsable" como la primera opción
+    let optionSeleccionar = document.createElement("option");
+    optionSeleccionar.value = '';
+    optionSeleccionar.text = 'Seleccionar Responsable';
+    campoResponsable.appendChild(optionSeleccionar);
+
+    // Realizar una solicitud al servidor para obtener el personal asociado al departamento seleccionado
+    fetch(`/activo/get_personal/${campoUbicacion.value}`)
+        .then(response => response.json())
+        .then(data => {
+            // Agregar las opciones de personal al campo responsable
+            data.forEach(personal => {
+                let option = document.createElement("option");
+                option.value = personal.id_dni;
+                option.text = personal.nombres_completos;
+                campoResponsable.appendChild(option);
+            });
+        });
+  });
+
+  // Formularios
+  let categoriaSelect = document.getElementById('categoria');
+  let formContainer = document.getElementById('formContainer');
+  let btnDetalles = document.getElementById("btnDetalles");
+
+  categoriaSelect.addEventListener('change', function () {
+    let categoriaId = categoriaSelect.value;
+    // se hace consulta a la ruta mostrada para cargar un formulario
+    fetch(`/activo/obtener_formulario_detalles/${categoriaId}`)
+      .then(response => response.text())
+      .then(data => {
+        // inserta de manera dinámica el formulario de detalles en el contenedor
+        formContainer.innerHTML = data;
+      });
+
+    let num_serie_id = document.getElementById("num_serie")
+    num_serie_id.addEventListener("change", function(){
+      
+      document.getElementById("segundoFormulario").setAttribute("action", `/activo/guardar_detalles/${num_serie_id.value}/${categoriaId}`);
+    })
+  });
+
+  document.getElementById('btnGuardar').addEventListener('click', function(e) {
+    e.preventDefault()
+    let primerFormulario = document.getElementById('primerFormulario');
+    let segundoFormulario = document.getElementById('segundoFormulario');
+
+    enviarFormulario(primerFormulario)
+    enviarFormulario(segundoFormulario)
+    
+    //function enviarFormulario(formulario) {
+    // Crear un objeto FormData con los datos del formulario
+    //let formData = new FormData(formulario);
+    
+    // Crear una solicitud AJAX
+    /*let xhr = new XMLHttpRequest();
+    xhr.open('POST', formulario.action, true);
+    console.log(formulario.action)
+    // Enviar los datos del formulario
+    xhr.send(formData);*/
+    //}
+
+    function enviarFormulario(formulario) {
+    // Crear un objeto FormData con los datos del formulario
+    let formData = new FormData(formulario);
+    
+    // Realizar la solicitud fetch con los datos del formulario
+    fetch(formulario.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al enviar el formulario');
+        }
+        // Manejar la respuesta si es necesario
+        return response.json(); // O response.text(), dependiendo del tipo de respuesta esperada
+    })
+    .then(data => {
+        // Hacer algo con la respuesta si es necesario
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+});
+
+</script>
+
+<style>
+  #btn-agregar{
+    position: fixed;
+    right: 45px;
+    bottom: 120px;
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  }
+
+  .contenedor-check{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .8rem;
+  }
+
+  #alquiler{
+    border: solid 1px rgb(74, 73, 73);
+  }
+
+  .h-acciones{
+    text-align: center;
+  }
+
+  .icon-acciones{
+    text-align: center;
+  }
+</style>
+{% endblock %}

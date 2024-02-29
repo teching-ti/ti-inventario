@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+   <meta charset="UTF-8">
+   <meta name="robots" content="noindex, nofollow">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <!-- JQuery -->
+   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+   <!--Bootstrap-->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+   <!-- FontAwesome -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+   <!-- Fav icon -->
+   <link rel="shortcut icon" href="{{ url_for('static', filename='images/fav-icon-ti.png') }}" type="image/x-icon">
+
+   <title>{% block title %} {% endblock %}</title>
+   <style>
+      /*boton de cambiar tema claro-oscuro*/
+      #cambiar-modo{
+         position: fixed; 
+         border-radius: 50%;
+         border: solid 2px whitesmoke;
+         width: 40px; 
+         height: 40px; 
+         right: 45px; 
+         bottom: 50px; 
+         box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+         background: none;
+      }
+   </style>
+</head>
+<body data-bs-theme="light">
+   <header>
+      <nav class="navbar navbar-expand-lg bg-dark border-bottom" data-bs-theme="dark">
+         <div class="container-fluid">
+            <a class="navbar-brand" href="/">TECHING</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+               <ul class="navbar-nav">
+                  {% if current_user.is_authenticated %}
+                  <li class="nav-item">
+                     <a class="nav-link active" aria-current="page" href="/">Inicio</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Gestión Usuarios
+                     </a>
+                     <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/departamentos">Departamentos</a></li>
+                        <li><a class="dropdown-item" href="/cargos">Cargos</a></li>
+                        <li><a class="dropdown-item" href="/personal">Personal</a></li>
+                        <li>
+                           <a class="dropdown-item" href="/register">Registrar Administrador</a>
+                           <!-- Planeando registrar visitante, podrá ver el inventario pero solo podrá ver  -->
+                        </li>
+                     </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Productos
+                     </a>
+                     <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/activos">Activos Generales</a></li>
+                        <li><a class="dropdown-item" href="/activo">Activos Específicos</a></li>
+                        <li><a class="dropdown-item" href="/categorias">Categorias</a></li>
+                        <li><a class="dropdown-item" href="/marcas">Marcas</a></li>
+                     </ul>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="/logout">Salir</a>
+                  </li>
+                  {% endif %}
+               </ul>
+            </div>
+         </div>
+      </nav>
+   </header>
+   <main class="container-xl">
+   {% block content %}
+   {% endblock %}
+   </main>
+   <footer>
+      <button id="cambiar-modo">
+         <i class="fa-regular  fa-lg fa-moon " id="theme-symbol"></i>
+      </button>
+   </footer>
+   <!--Bootstrap-->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+   <script>
+      /* --- Función para cambiar el tema start --- */
+      function cambiarTema(nuevoTema) {
+      let cuerpo = document.querySelector("body");
+      cuerpo.setAttribute("data-bs-theme", nuevoTema);
+
+      // Almacenar la preferencia del usuario en el almacenamiento local
+      // Se de esa manera se afecta a todo el sitio web y ya no a una sola página
+      localStorage.setItem("tema", nuevoTema);
+      }
+
+      // Obtener la preferencia del tema del almacenamiento local
+      let temaGuardado = localStorage.getItem("tema");
+
+      // Si hay una preferencia de tema almacenada, aplicarla
+      if (temaGuardado) {
+         cambiarTema(temaGuardado);
+      }
+
+      let botonCambiarModo = document.getElementById("cambiar-modo");
+      let simbolo = document.getElementById("theme-symbol")      
+      // Agregar un listener al botón para cambiar el tema
+      botonCambiarModo.addEventListener("click", function() {
+      let temaActual = document.querySelector("body").getAttribute("data-bs-theme");
+      // Alternar entre light y dark
+         if (temaActual === "light") {
+            simbolo.classList.remove("fa-moon")
+            simbolo.classList.add("fa-sun")
+            cambiarTema("dark");
+         } else {
+            simbolo.classList.remove("fa-sun")
+            simbolo.classList.add("fa-moon")
+            cambiarTema("light");
+         }
+      });
+      /* --- Función para cambiar el tema end --- */
+   </script>
+</body>
+</html>

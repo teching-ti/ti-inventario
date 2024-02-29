@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+{% block title %}Teching Categorías{% endblock %}
+{% block content %}
+<h1>Categorías</h1>
+<ul>
+    {% for categoria in categorias %}
+        <li>{{ categoria.nombre_categoria }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarCategoriaModal">
+    Agregar Categoria
+</button>
+
+<!-- Modal para agregar categoria -->
+<div class="modal fade" id="agregarCategoriaModal" tabindex="-1" aria-labelledby="agregarCategoriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarCategoriaModalLabel">Agregar Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label for="{{ form.nombre_categoria.id }}">Nombre Categoría</label>
+                        {{ form.nombre_categoria(class="form-control", id=form.nombre_categoria.id) }}
+                    </div>
+                    <div class="modal-footer">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
