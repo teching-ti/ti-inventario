@@ -101,6 +101,7 @@
           <div class="collapse" id="collapseExample">
             <div class="card card-body" id="formContainer">Formulario de detalles</div>
           </div>
+          <br>
           <button id="btnGuardar" type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </div>
@@ -204,8 +205,15 @@
     let primerFormulario = document.getElementById('primerFormulario');
     let segundoFormulario = document.getElementById('segundoFormulario');
 
-    enviarFormulario(primerFormulario)
-    enviarFormulario(segundoFormulario)
+    if (enviarFormulario(primerFormulario)){
+      console.log("enviado 1")
+    }
+    
+    //al enviar los formularios con ajax se presenta el error de registro, el segundo formulario al tratar de registrar información al instante, tiene a mostrar mensajes de error
+    //en base a que no existe aún la llave primaria de la tabla activo para proceder a registrar lo que sería con llave foránea el detalle de la laptop o del activo en cuestión.
+    //entonces, en base a ello se recomienda colocar el segundo formulario como una ruta secuencial para que cuando el primero se haay registrado con éxito, entonces
+    //el segundo también debería de ser capaz de ser registrado
+    setTimeout(enviarFormulario(segundoFormulario), 1500)
     
     //function enviarFormulario(formulario) {
     // Crear un objeto FormData con los datos del formulario
