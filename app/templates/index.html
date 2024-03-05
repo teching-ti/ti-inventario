@@ -1,10 +1,78 @@
-{% extends 'base.html' %}
-{% block title %}Inicio{% endblock %}
-{% block content %}
-    <br>
-    <h1><i class="fa-solid fa-gear fa-spin" style="color: green;"></i> It Works!, welcome: {{current_user.username}}</h1>
+{% extends 'base.html' %} {% block title %}Inicio{% endblock %} {% block content
+%}
+<br />
+<h1>
+  <i class="fa-solid fa-gear fa-spin" style="color: green"></i> Funciona!,
+  Usuario: {{current_user.username}}
+</h1>
+<br />
+<h2>Sistema de Inventario para el área de TI</h2>
+<a href="http://techingti1.pythonanywhere.com/login"
+  >Enlace de versión de prueba en pythonanywhere</a
+>
 
-    <br>
-    <h2>Sistema de Inventario para el área de TI</h2>
-    <a href="http://techingti1.pythonanywhere.com/login">Enlace de versión de prueba en pythonanywhere</a>
+<div style="height: 450px; max-width: 600px; border: solid 1px gray; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 2REM;">
+  <h3>Cantidad de activos por categoria</h3>
+  <canvas id="myChart" style="max-height: 350px;"></canvas>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // se obtiene el contexto del canvas
+      var ctx = document.getElementById('myChart').getContext('2d');
+      // ruta que devolverá los datos de los activos por categoría
+      fetch('/grafico1/datos_activos_por_categoria')
+          .then(response => response.json())
+          .then(datos => {
+              // Procesar los datos recibidos y actualizar el gráfico
+              let labels = datos.map(item => item.categoria);
+              let valores = datos.map(item => item.cantidad);
+              
+              let data = {
+                  labels: labels,
+                  datasets: [{
+                      label: `Distribución de activos por categoría`,
+                      data: valores,
+                      backgroundColor: [
+                          'rgba(72, 126, 176, 0.5)',
+                          'rgba(53, 59, 72, 0.5)',
+                          'rgba(255, 206, 86, 0.5)',
+                          'rgba(75, 192, 192, 0.5)',
+                          'rgba(231, 76, 60, 0.5)'
+                      ],
+                      borderColor: [
+                          'rgba(64, 115, 158, 0.5)',
+                          'rgba(47, 54, 64, 1)',
+                          'rgba(255, 206, 86, 1)',
+                          'rgba(75, 192, 192, 1)',
+                          'rgba(192, 57, 43, 1)'
+                      ],
+                      borderWidth: 1
+                  }]
+              };
+
+              let options = {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  legend: {
+                      position: 'bottom',
+                  },
+                  title: {
+                      display: true,
+                      text: 'Distribución de activos por categoría'
+                  },
+                  animation: {
+                      animateScale: true,
+                      animateRotate: true
+                  },
+              };
+              // Crear el gráfico circular con los datos dinámicos
+              var myChart = new Chart(ctx, {
+                  type: 'pie',
+                  data: data,
+                  options: options
+              });
+          });
+  });
+</script>
 {% endblock %}

@@ -9,7 +9,7 @@
     <thead class="table-dark">
        <tr>
           <th>N° Serie</th>
-          <th>Activo</th>
+          <th>Activo - Marca - Modelo</th>
           <th>N° de cargo</th>
           <th>Ubicacion</th>
           <th>Responsable</th>
@@ -27,7 +27,7 @@
       <td>{{ departamentos_responsable.get(activo.ubicacion, activo.ubicacion) }}</td>
       <td>{{ usuarios_responsables.get(activo.responsable, activo.responsable) }}</td>
       <td>{{ activo.estado }}</td>
-      <td class="icon-acciones"><button class="btn btn-primary"><i class="fa-solid fa-sliders"></i></button></td>
+      <td class="icon-acciones"><button class="btn btn-primary"><i class="fa-solid fa-clipboard-user"></i></button></td>
       <td class="icon-acciones"><button class="btn btn-success"><i class="fa-solid fa-clipboard-list"></i></button></td>
     </tr>
     {% endfor %}
@@ -204,28 +204,8 @@
     e.preventDefault()
     let primerFormulario = document.getElementById('primerFormulario');
     let segundoFormulario = document.getElementById('segundoFormulario');
-
-    if (enviarFormulario(primerFormulario)){
-      console.log("enviado 1")
-    }
-    
-    //al enviar los formularios con ajax se presenta el error de registro, el segundo formulario al tratar de registrar información al instante, tiene a mostrar mensajes de error
-    //en base a que no existe aún la llave primaria de la tabla activo para proceder a registrar lo que sería con llave foránea el detalle de la laptop o del activo en cuestión.
-    //entonces, en base a ello se recomienda colocar el segundo formulario como una ruta secuencial para que cuando el primero se haay registrado con éxito, entonces
-    //el segundo también debería de ser capaz de ser registrado
-    setTimeout(enviarFormulario(segundoFormulario), 1500)
-    
-    //function enviarFormulario(formulario) {
-    // Crear un objeto FormData con los datos del formulario
-    //let formData = new FormData(formulario);
-    
-    // Crear una solicitud AJAX
-    /*let xhr = new XMLHttpRequest();
-    xhr.open('POST', formulario.action, true);
-    console.log(formulario.action)
-    // Enviar los datos del formulario
-    xhr.send(formData);*/
-    //}
+    enviarFormulario(primerFormulario)
+    enviarFormulario(segundoFormulario)
 
     function enviarFormulario(formulario) {
     // Crear un objeto FormData con los datos del formulario
@@ -250,15 +230,16 @@
     .catch(error => {
         console.error('Error:', error);
     });
-}
+  }
 });
+
 
 </script>
 
 <style>
   #btn-agregar{
     position: fixed;
-    right: 45px;
+    right: 30px;
     bottom: 120px;
     border-radius: 50%;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;

@@ -15,6 +15,9 @@
    <!-- Fav icon -->
    <link rel="shortcut icon" href="{{ url_for('static', filename='images/fav-icon-ti.png') }}" type="image/x-icon">
 
+   <!-- Librería de js para gráficos -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
    <title>{% block title %} {% endblock %}</title>
    <style>
       /*boton de cambiar tema claro-oscuro*/
@@ -24,7 +27,7 @@
          border: solid 2px whitesmoke;
          width: 40px; 
          height: 40px; 
-         right: 45px; 
+         right: 30px; 
          bottom: 50px; 
          box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
          background: none;

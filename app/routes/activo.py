@@ -113,9 +113,9 @@ def obtener_formulario_detalles(categoria_id):
     #agregar los formularios, el codigo del diccionario debe ser igual al id de la categoria
     formularios_por_categoria = {
             1: 'formulario_detalles_laptop.html',
-            2: 'formulario_detalles_mouse.html',
-            3: 'formulario_detalles_mousepad.html',
-            4: 'formulario_detalles_monitor.html',
+            2: 'formulario_detalles_monitor.html',
+            3: 'formulario_detalles_mouse.html',
+            4: 'formulario_detalles_mousepad.html',
             5: 'formulario_detalles_soporte_laptop.html'
     }
 
@@ -128,11 +128,11 @@ def obtener_formulario_detalles(categoria_id):
         if(categoria_id==1):
             form = AgregarDetallesLaptop()
         elif(categoria_id==2):
-            form = AgregarDetallesMouse()
-        elif(categoria_id==3):
-            form = AgregarDetallesMousepad()
-        elif(categoria_id==4):
             form = AgregarDetallesMonitor()
+        elif(categoria_id==3):
+            form = AgregarDetallesMouse()
+        elif(categoria_id==4):
+            form = AgregarDetallesMousepad()
         elif(categoria_id==5):
             form = AgregarDetallesSoporteLaptop()
 
@@ -152,11 +152,11 @@ def guardar_detalles(activo_id, categoria_id):
     if categoria_id == 1:
         form = AgregarDetallesLaptop()
     elif categoria_id == 2:
-        form = AgregarDetallesMouse()
-    elif categoria_id == 3:
-        form = AgregarDetallesMousepad()
-    elif categoria_id == 4:
         form = AgregarDetallesMonitor()
+    elif categoria_id == 3:
+        form = AgregarDetallesMouse()
+    elif categoria_id == 4:
+        form = AgregarDetallesMousepad()
     elif categoria_id == 5:
         form = AgregarDetallesSoporteLaptop()
 
@@ -175,18 +175,6 @@ def guardar_detalles(activo_id, categoria_id):
                 comentarios=form.comentarios.data
             )
         elif categoria_id == 2:
-            detalles = MouseDetalles(
-                activo_id=activo_id,
-                conexion_tipo=form.conexion_tipo.data,
-                comentarios=form.comentarios.data
-            )
-        elif categoria_id == 3:
-            detalles = MousepadDetalles(
-                activo_id=activo_id,
-                dimensiones=form.dimensiones.data,
-                comentarios=form.comentarios.data
-            )
-        elif categoria_id == 4:
             detalles = MonitorDetalles(
                 activo_id = activo_id,
                 tipo_panel = form.tipo_panel.data,
@@ -195,6 +183,20 @@ def guardar_detalles(activo_id, categoria_id):
                 peso = form.peso.data,
                 dimensiones = form.dimensiones.data,
                 comentarios = form.comentarios.data
+            )
+            
+        elif categoria_id == 3:
+            detalles = MouseDetalles(
+                activo_id=activo_id,
+                conexion_tipo=form.conexion_tipo.data,
+                comentarios=form.comentarios.data
+            )
+            
+        elif categoria_id == 4:
+            detalles = MousepadDetalles(
+                activo_id=activo_id,
+                dimensiones=form.dimensiones.data,
+                comentarios=form.comentarios.data
             )
         elif categoria_id == 5:
             detalles = SoporteLatopDetalles(

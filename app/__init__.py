@@ -12,6 +12,7 @@ from .routes.categoria import categorias_bp
 from .routes.marca import marcas_bp
 from .routes.activo_general import activos_bp
 from .routes.activo import activo_bp
+from .routes.grafico1 import grafico1_bp
 
 from .models.userModels import db, User
 from flask_migrate import Migrate
@@ -50,6 +51,8 @@ app.register_blueprint(categorias_bp)
 app.register_blueprint(marcas_bp)
 app.register_blueprint(activos_bp)
 app.register_blueprint(activo_bp)
+#graficos
+app.register_blueprint(grafico1_bp)
 
 # Manejador para la página no encontrada (404)
 @app.errorhandler(404)
