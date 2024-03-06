@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField, DateField, IntegerField, BooleanField, HiddenField
+from wtforms import StringField, SubmitField, PasswordField, SelectField, DateField, IntegerField, BooleanField, HiddenField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo
 from datetime import datetime
 
@@ -118,6 +118,10 @@ class AgregarActivoForm(FlaskForm):
         #    [(personal.id_dni, personal.nombres_completos) for personal in Personal.query.all()]
         self.estado.choices = [('Operativo', 'Operativo'), ('Averiado','Averiado'), ('Baja','Baja')]
 
+'''
+Seccion de formularios de detalles de activos
+'''
+
 #formulario para agregar los detalles de laptop
 class AgregarDetallesLaptop(FlaskForm):
     activo_id = HiddenField('Activo ID')
@@ -159,11 +163,35 @@ class AgregarDetallesSoporteLaptop(FlaskForm):
     peso_maximo = StringField('Peso Máxmimo', validators=[DataRequired()], default='...')
     comentarios = StringField('Comentarios', validators=[DataRequired()], default='...')
 
+#formulario para agregar los detalles de cámaras web
+class AgregarDetallesCamaraWeb(FlaskForm):
+    activo_id = HiddenField('Activo ID')
+    resolucion = StringField('Resolucion', validators=[DataRequired()], default='...')
+    sensor = StringField('Sensor', validators=[DataRequired()], default='...')
+    microfono = StringField('Microfono', validators=[DataRequired()], default='...')
+    dimensiones = StringField('Dimensiones', validators=[DataRequired()], default='...')
+    conector = StringField('Conector', validators=[DataRequired()], default='...')
+    comentarios = TextAreaField('Comentarios', validators=[DataRequired()], default='...')
+
+#formulario asignarle un activo al personal
+class AsignarPersonalActivoForm(FlaskForm):
+    # colocar únicamente los campos de la tabla que van a ser 'modificados'
+    # creando el formulario que será utilizado para asignar los activos al personal
+    activo_id = HiddenField('Activo ID')
+    nro_cargo = StringField('N° de Cargo', validators=[DataRequired()])
+    #los campos de ubicacion y responsable deberían de aparecer como selects vacíos y deberían de funcionar de la siguiente manera
+    #cuando se se selecciona una ubicacion, el select de responsable debería de cargarse con las  opciones del personal
+    #que se encuentra desarrollando labores en el departamento seleccionado, puede cargarse por defecto como campo vacío
+    #debido a que como se encuentran dentro del 'almacén de ti', practicamente es como si contaran con estos campos en vacío
+    #acomodar las consultas sql para realizar una modificación de lo que sería este forumulario, en los campos específicos, los cuales serían
+    #"todos los mencionados en este form, a excepción del activo_id"
+    ubicacion = SelectField('Prueba 1', validators=[DataRequired()])
+    responsable = SelectField('Prueba2', validators=[DataRequired()])
+
 #formulario para asignar un activo
 class AsignarActivoForm(FlaskForm):
     activo = SelectField('Activo', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Asignar')
-
 
 #para la asignación de activos al personal, se debe de regitrar pimero a los activos, una vez estos existan en la base de datos
 #recién podrán ser cargados y estatrán  disponibles para poder ser seleccionados en el formulario de agregar ekemto

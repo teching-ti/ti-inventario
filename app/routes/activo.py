@@ -1,6 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
-from app.forms import AgregarActivoForm, datetime, AgregarDetallesLaptop, AgregarDetallesMouse, AgregarDetallesMousepad, AgregarDetallesMonitor, AgregarDetallesSoporteLaptop
-from app.models.userModels import db, Activo, ActivoGeneral, Personal, Departamento, HistorialActivo, LaptopDetalles, MouseDetalles, MousepadDetalles, MonitorDetalles, SoporteLatopDetalles
+'''
+En las dos líneas siguientes se debe colocar lo siguiente:
+- El formulario de detalles
+- El modelo de los detalles
+'''
+from app.forms import AgregarActivoForm, datetime, AgregarDetallesLaptop, AgregarDetallesMouse, AgregarDetallesMousepad, AgregarDetallesMonitor, AgregarDetallesSoporteLaptop, AgregarDetallesCamaraWeb
+from app.models.userModels import db, Activo, ActivoGeneral, Personal, Departamento, HistorialActivo, LaptopDetalles, MouseDetalles, MousepadDetalles, MonitorDetalles, SoporteLatopDetalles, CamarasWebDetalles
 from flask_login import login_required
 
 activo_bp = Blueprint('activo', __name__, url_prefix='/activo')
@@ -116,13 +121,14 @@ def obtener_formulario_detalles(categoria_id):
             2: 'formulario_detalles_monitor.html',
             3: 'formulario_detalles_mouse.html',
             4: 'formulario_detalles_mousepad.html',
-            5: 'formulario_detalles_soporte_laptop.html'
+            5: 'formulario_detalles_soporte_laptop.html',
+            12: 'formulario_detalles_camara_web.html'
     }
 
     formulario = formularios_por_categoria.get(categoria_id)
 
     # en base al id de la categoría se elige que formulario se va a renderizar
-
+    # validar que formulario es el que se va a retornar
     if formulario:
         form = None
         if(categoria_id==1):
@@ -135,13 +141,16 @@ def obtener_formulario_detalles(categoria_id):
             form = AgregarDetallesMousepad()
         elif(categoria_id==5):
             form = AgregarDetallesSoporteLaptop()
+        elif(categoria_id==12):
+            form = AgregarDetallesCamaraWeb()
+        #agregar un elif con la categoria creada
 
     if formulario:
         print(f'detalles/{formulario}')
         return render_template(f'detalles/{formulario}', form=form)
     else:
         # Si no se encontró ninguna plantilla para la categoría, puedes devolver una plantilla predeterminada
-        return '<h1>Este activo no existe</h1>'
+        return '<h1>Este activo no existe, deberá ser agregado siguiendo el archivo "anotaciones.txt"</h1>'
     
 @activo_bp.route('/guardar_detalles/<string:activo_id>/<int:categoria_id>', methods=['POST'])
 @login_required
@@ -159,6 +168,8 @@ def guardar_detalles(activo_id, categoria_id):
         form = AgregarDetallesMousepad()
     elif categoria_id == 5:
         form = AgregarDetallesSoporteLaptop()
+    elif categoria_id == 12:
+        form = AgregarDetallesCamaraWeb()
 
     if request.method == 'POST' and form.validate_on_submit():
         # Aquí se obtienen los datos del formulario y se guardan en la tabla correspondiente
@@ -205,6 +216,16 @@ def guardar_detalles(activo_id, categoria_id):
                 numero_ventiladores = form.numero_ventiladores.data,
                 dimensiones = form.dimensiones.data,
                 peso_maximo = form.peso_maximo.data,
+                comentarios = form.comentarios.data
+            )
+        elif categoria_id == 12:
+            detalles = CamarasWebDetalles(
+                activo_id = activo_id,
+                resolucion = form.resolucion.data,
+                sensor = form.sensor.data,
+                microfono = form.microfono.data,
+                dimensiones = form.dimensiones.data,
+                conector = form.conector.data,
                 comentarios = form.comentarios.data
             )
 

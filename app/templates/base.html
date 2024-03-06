@@ -38,12 +38,12 @@
    <header>
       <nav class="navbar navbar-expand-lg bg-dark border-bottom" data-bs-theme="dark">
          <div class="container-fluid">
-            <a class="navbar-brand" href="/">TECHING</a>
+            <a class="navbar-brand mx-5" href="/">TECHING</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-               <ul class="navbar-nav">
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+               <ul class="navbar-nav mx-5">
                   {% if current_user.is_authenticated %}
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page" href="/">Inicio</a>
@@ -58,7 +58,9 @@
                         <li><a class="dropdown-item" href="/personal">Personal</a></li>
                         <li>
                            <a class="dropdown-item" href="/register">Registrar Administrador</a>
+                           <!-- En evaluación -->
                            <!-- Planeando registrar visitante, podrá ver el inventario pero solo podrá ver  -->
+                           <!-- Configuración de perfiles, perfil visitantes únicamente podrá visualizar información -->
                         </li>
                      </ul>
                   </li>
@@ -69,8 +71,8 @@
                      <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/activos">Activos Generales</a></li>
                         <li><a class="dropdown-item" href="/activo">Activos Específicos</a></li>
-                        <li><a class="dropdown-item" href="/categorias">Categorias</a></li>
-                        <li><a class="dropdown-item" href="/marcas">Marcas</a></li>
+                        <!-- <li><a class="dropdown-item" href="/categorias">Categorias</a></li>
+                        <li><a class="dropdown-item" href="/marcas">Marcas</a></li> -->
                      </ul>
                   </li>
                   <li class="nav-item">

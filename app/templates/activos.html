@@ -27,7 +27,7 @@
       <td>{{ departamentos_responsable.get(activo.ubicacion, activo.ubicacion) }}</td>
       <td>{{ usuarios_responsables.get(activo.responsable, activo.responsable) }}</td>
       <td>{{ activo.estado }}</td>
-      <td class="icon-acciones"><button class="btn btn-primary"><i class="fa-solid fa-clipboard-user"></i></button></td>
+      <td class="icon-acciones asignar"><a href="{{ url_for('asignacion.asignar_activo', num_serie=activo.num_serie) }}" class="btn btn-primary"><i class="fa-solid fa-clipboard-user"></i></a></td>
       <td class="icon-acciones"><button class="btn btn-success"><i class="fa-solid fa-clipboard-list"></i></button></td>
     </tr>
     {% endfor %}

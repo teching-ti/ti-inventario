@@ -1,0 +1,35 @@
+06_03_2024
+/// ***** /// IMPORTANTE /// ***** ///
+1.  CADA VEZ QUE SE REGISTRE UNA CATEGORÍA EN EL INVENTARIO, SE DEBE REALIZAR LO SIGUIENTE:
+
+    1.1 Dirigirse al archivo models/userModels.py y buscar a la seccion llamada 'base de detalles para activos'
+        aquí se creará una tabla, la cual debe tener el nombre adecuado siguiendo la estructura de trabajo,
+        se debe asegurar de colocar el nombre a los campos, de manera correcta
+
+    1.2 Dirigirse al archivo forms.py, en este archivo se encuentran todos los formularios que serán usados en el sistema,
+        se debe crear el formulario para registrar los detalles de dicha categoría, se debe respetar la estructura que se
+        ha usado para los otros formularios
+
+    1.3 Dirigirse a la carpeta 'templates/detalles', aquí se debe crear el formulario en html de la categoría registrada, solo debe estar
+        presente la etiqueta 'form', con los div y campos respectivos para el registro correcto
+
+    1.4 Después de haber realizado los pasos anteriores, dirigirse al archivo /routes/activo.py, en ese archivo se debe indicar lo siguiente:
+        - En la línea 2, se tiene la indicación: 
+            'from app.forms import {aquiDebenIrLosFormularios}', 
+            'from app.models.userModels import {aquiDebenIrLosModelos}'
+
+        - Dirigirse a la ruta 'obtener_formulario_detalles'
+
+        * En el diccionario 'formularios_por_categoria'; se encuentran los números de id de cada modelo y se coloca como valor el template del
+        formulario de cada detalle de activo creado
+        * En el apartado en donde se valida que formulario es el que se va a retornar, se debe agregar el elif respectivo con el id recién creado
+        y colocar como form a su formulario respectivo
+    
+    1.5 Finalmente dentro del archivo /routes/activo.py, debe dirigirse a la ruta 'guardar_detalles' y seguir los pasos siguientes:
+        * Guiarse de los comentarios; para el primer paso guíese del comentario: # Aquí se determina qué formulario usar según la categoría del activo, para el segundo paso guíese del comentario: # Aquí se obtienen los datos del formulario y se guardan en la tabla correspondiente
+
+        - Como primer paso, agregar a la cola de elif el formulario según la categoría del activo en la variable "form" y colocar como categoria_id=='el id del activo segun la base de datos', tal y como se hizo en el paso anterior
+
+        - Como segundo paso, colocar como categoria_id == 'el id de la categoria', guardar dentro de detalles el objeto correspondiente con los datos adecuados basados en el formulario
+    
+    1.6 Se recomienda también añadir un nuevo color en el template de index para los gráficos

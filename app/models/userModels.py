@@ -97,6 +97,10 @@ class HistorialActivo(db.Model):
     # Definir una relación con el activo asociado
     activo = db.relationship('Activo', backref='historial')
 
+'''
+Seccion: base de detalles para activos
+'''
+
 class LaptopDetalles(db.Model):
     activo_id = db.Column(db.String(50), db.ForeignKey('activo.num_serie'), primary_key=True)
     procesador = db.Column(db.String(50))
@@ -129,11 +133,20 @@ class SoporteLatopDetalles(db.Model):
     activo_id = db.Column(db.String(50), db.ForeignKey('activo.num_serie'), primary_key = True)
     puertos_usb = db.Column(db.String(50))
     numero_ventiladores = db.Column(db.String(10))
-    dimensiones = db.Column(db.String(20))
+    dimensiones = db.Column(db.String(20))  
     peso_maximo = db.Column(db.String(20))
     comentarios = db.Column(db.String(100))
 
-#información editable desde después del momento de suregistro
+class CamarasWebDetalles(db.Model):
+    activo_id = db.Column(db.String(50), db.ForeignKey('activo.num_serie'), primary_key = True)
+    resolucion = db.Column(db.String(100))
+    sensor = db.Column(db.String(50))
+    microfono = db.Column(db.String(100))
+    dimensiones = db.Column(db.String(100))
+    conector = db.Column(db.String(20))
+    comentarios = db.Column(db.String(100))
+
+#información editable desde después del momento de su registro
     
 '''
 Se deben colocar más tablas de detalles para cada categoría de los activos que vayan a ser registrados en la base de datos

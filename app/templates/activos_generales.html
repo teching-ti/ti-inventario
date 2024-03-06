@@ -2,7 +2,15 @@
 {% block title %}Activos Generales{% endblock %}
 
 {% block content %}
-    <h1>Activos Generales</h1>
+<div class="activos-generales-titulo row my-2">
+    <h1 class="col-md-4">Activos Generales</h1>
+    <div class="titulo-botones col-md-4 ms-auto">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarCategoriaModal" id="boton-agregarCategoria">Añadir Categoría</button>
+        &nbsp;
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#agregarMarcaModal" id="boton-agregarMarca">Añadir Marca</button>
+    </div>
+</div>
+    
     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#filtroModal" id="abrir-filtro">
         <i class="fa-solid fa-filter"></i>
     </button>
@@ -83,11 +91,12 @@
         </div>
     </div>
 
+    <!-- Modal para filtrar activos generales -->
     <div class="modal fade" id="filtroModal" tabindex="-1" aria-labelledby="filtroModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="filtroModalLabel">Filtrar por Categoría y Marca</h5>
+                    <h5 class="modal-title" id="filtroModalLabel">Filtrar por Categoría y/o Marca</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -113,7 +122,74 @@
         </div>
     </div>
 
+    <!-- Modal para agregar categoría -->
+    <div class="modal fade" id="agregarCategoriaModal" tabindex="-1" aria-labelledby="agregarCategoriLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarCategoriaModalLabel">Agregar Categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('activos.agregar_categorias') }}">
+                        {{ form2.hidden_tag() }}  <!-- Añade campos ocultos para seguridad -->
+                        <div class="form-group">
+                            <label for="{{ form2.nombre_categoria.id }}">Nombre Categoría</label>
+                            {{ form2.nombre_categoria(class="form-control", id=form2.nombre_categoria.id) }}
+                        </div>
+                        <div class="modal-footer">
+                            {{ form2.submit(class="btn btn-primary btn-form-categoria") }}
+                        </div>
+                    </form>
+                    <br>
+                    <ul class="listas">
+                        {% for cat in categorias %}
+                        <li class="cat-nombres" id="{{cat.nombre_categoria}}">{{cat.nombre_categoria}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar Marca -->
+    <div class="modal fade" id="agregarMarcaModal" tabindex="-1" aria-labelledby="agregarMarcaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarMarcaModalLabel">Agregar Marca</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('activos.agregar_marcas') }}">
+                        {{ form3.hidden_tag() }}
+                        <div class="form-group">
+                            <label for="{{ form3.nombre_marca.id }}">Nombre Marca</label>
+                            {{ form3.nombre_marca(class="form-control", id=form3.nombre_marca.id) }}
+                        </div>
+                        <div class="modal-footer">
+                            {{ form3.submit(class="btn btn-primary btn-form-marca") }}
+                        </div>
+                    </form>
+                    <br>
+                    <ul class="listas">
+                        {% for mar in marcas %}
+                        <li class="mar-nombres" id="{{mar.nombre_marca}}">{{mar.nombre_marca}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
+        /*.activos-generales-titulo{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: .5rem;
+        }   */
+
         #form-nombre{
             display: none;
         }
@@ -185,7 +261,6 @@
             });
             return seleccion;
         }
-
     </script>
 
 
