@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %} Asignar Activos {% endblock %}
+
+<h3>Activos Seleccionados:</h3>
+
+{% block content %}
+<div class="row justify-content-center align-items-center mt-5">
+    <div class="col-md-4 border rounded-4 shadow py-4 px-3">
+        <h3>Asignción de Activos</h3>
+        <form method="POST" action="{{ url_for('asignacion.guardar_asignacion') }}">
+            {{ form.hidden_tag() }} {# Agregar este campo oculto para enviar el token CSRF #}
+            <div class="form-group my-3">
+                <label for="nro_cargo">Número de Cargo:</label>
+                {{ form.nro_cargo(class="form-control") }}
+            </div>
+            <div class="form-group my-3">
+                <label for="ubicacion">Ubicación:</label>
+                <select id="{{ form.ubicacion.id }}" name="{{ form.ubicacion.name }}" class="form-select">
+                    <option value="">Seleccionar departamento</option>  <!-- Opción inicial -->
+                    {% for departamento in form.ubicacion.choices %}
+                    <option value="{{ departamento[0] }}">{{ departamento[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group my-3">
+                <label for="responsable">Responsable:</label>
+                {{ form.responsable(class="form-control") }}
+            </div>
+            <div class="form-group my-3">
+                <label for="activos_seleccionados">En proceso de asignación:</label>
+                {{ form.activos_seleccionados(class="form-control", value = activos_seleccionados | join(','), readonly = True ) }}
+            </div>
+            <button type="submit" class="btn btn-primary">Asignar Activos</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Obtener el elemento select de departamento
+    let departamentoSelect = document.getElementById("{{ form.ubicacion.id }}");
+        departamentoSelect.addEventListener("change", function() {
+            let responsableSelect = document.getElementById("{{ form.responsable.id }}");
+            responsableSelect.innerHTML = ''; // Limpia las opciones actuales del select de responsable
+            // Solicitud al servidor para obtener los usuarios del departamento seleccionado
+            fetch(`/asignacion/usuarios/${departamentoSelect.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Agregar las opciones de los usuarios al select de responsable
+                    data.forEach(usuario => {
+                        let option = document.createElement('option');
+                        option.text = usuario.nombre_completo;
+                        option.value = usuario.id;
+                        responsableSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+</script>
+{% endblock %}

@@ -57,7 +57,6 @@ class AgregarPersonalForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(AgregarPersonalForm, self).__init__(*args, **kwargs)
-        
         #agrega una opción vacía al principio de las opciones del campo de departamentos
         #agrega las opciones de departamentos
         self.departamento_id.choices = [('0', 'Seleccionar departamento')] + \
@@ -175,23 +174,28 @@ class AgregarDetallesCamaraWeb(FlaskForm):
 
 #formulario asignarle un activo al personal
 class AsignarPersonalActivoForm(FlaskForm):
-    # colocar únicamente los campos de la tabla que van a ser 'modificados'
-    # creando el formulario que será utilizado para asignar los activos al personal
     activo_id = HiddenField('Activo ID')
     nro_cargo = StringField('N° de Cargo', validators=[DataRequired()])
-    #los campos de ubicacion y responsable deberían de aparecer como selects vacíos y deberían de funcionar de la siguiente manera
-    #cuando se se selecciona una ubicacion, el select de responsable debería de cargarse con las  opciones del personal
-    #que se encuentra desarrollando labores en el departamento seleccionado, puede cargarse por defecto como campo vacío
-    #debido a que como se encuentran dentro del 'almacén de ti', practicamente es como si contaran con estos campos en vacío
-    #acomodar las consultas sql para realizar una modificación de lo que sería este forumulario, en los campos específicos, los cuales serían
-    #"todos los mencionados en este form, a excepción del activo_id"
-    ubicacion = SelectField('Prueba 1', validators=[DataRequired()])
-    responsable = SelectField('Prueba2', validators=[DataRequired()])
+    ubicacion = SelectField('Departamento', validators=[DataRequired()], default='...')
+    responsable = SelectField('Responsable', validators=[DataRequired()])
+    activos_seleccionados = StringField('Activos Seleccionados')
+
+    def __init__(self, *args, **kwargs):
+        super(AsignarPersonalActivoForm, self).__init__(*args, **kwargs)
+        # Agregar una opción vacía al principio de las opciones del campo de ubicación
+        # Agregar las opciones de departamentos
+        self.ubicacion.choices = [('0', 'Seleccionar departamento')] + \
+                                 [(departamento.id, departamento.nombre_departamento)
+                                  for departamento in Departamento.query.all()]
+        # Agregar las opciones de responsables
+        self.responsable.choices = [('0', 'Seleccionar responsable')] + \
+                                   [(usuario.id_dni, usuario.nombres_completos)
+                                    for usuario in Personal.query.all()]
 
 #formulario para asignar un activo
 class AsignarActivoForm(FlaskForm):
     activo = SelectField('Activo', coerce=int, validators=[DataRequired()])
-    submit = SubmitField('Asignar')
+    submit = SubmitField('En proceso de asignación')
 
 #para la asignación de activos al personal, se debe de regitrar pimero a los activos, una vez estos existan en la base de datos
 #recién podrán ser cargados y estatrán  disponibles para poder ser seleccionados en el formulario de agregar ekemto

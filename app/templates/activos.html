@@ -1,39 +1,46 @@
 <!-- agregar_activo.html -->
 {% extends "base.html" %}
+{% block title %}
+Listado de Activos
+{% endblock %}
 {% block content %}
 <br>
-<h1>Activos Específicos</h1>
+<h1>Todos los activos</h1>
 <br>
 <div class="table-responsive">
   <table class="table table-hover">
     <thead class="table-dark">
        <tr>
+          <th></th>
           <th>N° Serie</th>
           <th>Activo - Marca - Modelo</th>
           <th>N° de cargo</th>
           <th>Ubicacion</th>
           <th>Responsable</th>
           <th>Estado</th>
-          <th class="h-acciones">Asignar</th>
           <th class="h-acciones">Historial</th>
        </tr>
     </thead>
     <tbody>
       {% for activo in activos %}
     <tr>
+      <td><input type="checkbox" name="activos_seleccionados" value="{{ activo.num_serie }}"></td>
       <td>{{ activo.num_serie }}</td>
       <td>{{ activos_nombres.get(activo.activo_id, activo.activo_id) }}</td>
       <td>{{ activo.nro_cargo }}</td>
       <td>{{ departamentos_responsable.get(activo.ubicacion, activo.ubicacion) }}</td>
       <td>{{ usuarios_responsables.get(activo.responsable, activo.responsable) }}</td>
       <td>{{ activo.estado }}</td>
-      <td class="icon-acciones asignar"><a href="{{ url_for('asignacion.asignar_activo', num_serie=activo.num_serie) }}" class="btn btn-primary"><i class="fa-solid fa-clipboard-user"></i></a></td>
       <td class="icon-acciones"><button class="btn btn-success"><i class="fa-solid fa-clipboard-list"></i></button></td>
     </tr>
     {% endfor %}
     </tbody>
   <table>
  </div>
+ <!-- Este boton será el encargado de asignar a un personal los activos marcados -->
+ <div class="floating-button">
+  <button id="btn-asignar" class="btn btn-outline-primary">Asignar Activos</button>
+</div>
 
 <button type="button" id="btn-agregar"  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarActivoModal"><i class="fa-solid fa-plus"></i></button>
 <!-- Modal para agregar activo -->
@@ -104,6 +111,53 @@
           <br>
           <button id="btnGuardar" type="submit" class="btn btn-primary">Guardar</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filtroModal">
+  Filtrar
+</button>
+
+<!-- Modal de filtro -->
+<div class="modal fade" id="filtroModal" tabindex="-1" aria-labelledby="filtroModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="filtroModalLabel">Filtrar Activos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="filtroForm">
+          <div class="mb-3">
+            <p for="categorias">Categorías:</p>
+            <!-- Checkbox para categorías -->
+            {% for categoria in categorias %}
+            <label><input type="checkbox" name="categorias" value="{{ categoria.nombre_categoria }}"> {{ categoria.nombre_categoria }}</label><br>
+            {% endfor %}
+          </div>
+          <div class="mb-3">
+            <p for="marcas">Marcas:</p>
+            <!-- Checkbox para marcas -->
+            {% for marca in marcas %}
+            <label><input type="checkbox" name="marcas" value="{{ marca.nombre_marca }}"> {{ marca.nombre_marca }}</label><br>
+            {% endfor %}
+          </div>
+          <div class="mb-3">
+            <label for="disponibilidad" class="form-label">Disponibilidad:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="disponible" id="disponible" name="disponibilidad">
+              <label class="form-check-label" for="disponible">Disponible</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="asignado" id="asignado" name="disponibilidad">
+              <label class="form-check-label" for="asignado">Asignado</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+        </form>
       </div>
     </div>
   </div>
@@ -233,7 +287,65 @@
   }
 });
 
+  // Las líneas siguientes se encargan de enviar a la ruta indicada los activos que hayan sido seleccionados
+  let btnAsignar = document.getElementById('btn-asignar');
 
+  // Agregar un evento clic al botón "Asignar Activos"
+  btnAsignar.addEventListener('click', function() {
+      // Obtener todos los checkboxes seleccionados
+      let checkboxes = document.querySelectorAll('input[name="activos_seleccionados"]:checked');
+      let activosSeleccionados = [];
+
+      // Obtener los valores de los activos seleccionados
+      checkboxes.forEach(function(checkbox) {
+          activosSeleccionados.push(checkbox.value);
+      });
+
+      // Redirigir a la ruta de asignación de activos con los activos seleccionados como parámetros
+      window.location.href = '/asignacion/asignar_activos?activos=' + activosSeleccionados.join(',');
+  });
+
+    // Filtro
+    document.getElementById('filtroForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      filtrarResultados();
+      $('#filtroModal').modal('hide');
+    });
+
+    function filtrarResultados() {
+    let categoriasSeleccionadas = obtenerSeleccion('categorias');
+    let marcasSeleccionadas = obtenerSeleccion('marcas');
+    let disponibilidadSeleccionada = obtenerSeleccion('disponibilidad');
+
+    let filas = document.querySelectorAll('tbody tr');
+    filas.forEach(function(fila) {
+        let activoMarcaModelo = fila.querySelector('td:nth-child(3)').textContent;
+        let disponibilidadEnFila = fila.querySelector('td:nth-child(6)').textContent; // Columna de disponibilidad
+
+        let [categoriaEnFila, marcaEnFila] = activoMarcaModelo.split(' - ');
+        let categoriaCoincide = categoriasSeleccionadas.includes(categoriaEnFila) || categoriasSeleccionadas.includes('todos');
+        let marcaCoincide = marcasSeleccionadas.includes(marcaEnFila) || marcasSeleccionadas.includes('todos');
+        let disponibilidadCoincide = disponibilidadSeleccionada === 'todos' || disponibilidadEnFila.includes('Almacen De TI Teching');
+        let asignadoCoincide = disponibilidadSeleccionada === 'asignado';
+
+        if ((categoriasSeleccionadas.length === 0 || categoriaCoincide) && 
+            (marcasSeleccionadas.length === 0 || marcaCoincide)  && 
+            (disponibilidadSeleccionada === 'todos' || disponibilidadCoincide)) {
+            fila.style.display = 'table-row';
+        } else {
+            fila.style.display = 'none';
+        }
+    });
+}
+
+  function obtenerSeleccion(nombreCheckbox) {
+    let seleccion = [];
+    let checkboxes = document.querySelectorAll('input[name="' + nombreCheckbox + '"]:checked');
+    checkboxes.forEach(function(checkbox) {
+      seleccion.push(checkbox.value);
+    });
+    return seleccion;
+  }
 </script>
 
 <style>

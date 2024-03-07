@@ -5,7 +5,7 @@ En las dos líneas siguientes se debe colocar lo siguiente:
 - El modelo de los detalles
 '''
 from app.forms import AgregarActivoForm, datetime, AgregarDetallesLaptop, AgregarDetallesMouse, AgregarDetallesMousepad, AgregarDetallesMonitor, AgregarDetallesSoporteLaptop, AgregarDetallesCamaraWeb
-from app.models.userModels import db, Activo, ActivoGeneral, Personal, Departamento, HistorialActivo, LaptopDetalles, MouseDetalles, MousepadDetalles, MonitorDetalles, SoporteLatopDetalles, CamarasWebDetalles
+from app.models.userModels import db, Activo, ActivoGeneral, Personal, Departamento, HistorialActivo, LaptopDetalles, MouseDetalles, MousepadDetalles, MonitorDetalles, SoporteLatopDetalles, CamarasWebDetalles, Categoria, Marca
 from flask_login import login_required
 
 activo_bp = Blueprint('activo', __name__, url_prefix='/activo')
@@ -15,7 +15,9 @@ activo_bp = Blueprint('activo', __name__, url_prefix='/activo')
 def listar_activos():
     form = AgregarActivoForm()
 
-    activos = Activo.query.all()
+    activos =  Activo.query.join(Departamento, Activo.ubicacion == Departamento.id) \
+                          .order_by(Departamento.nombre_departamento) \
+                          .all()
 
     usuarios_responsables = {}
     departamentos_responsable = {}
@@ -43,7 +45,14 @@ def listar_activos():
             if activo_general:
                 activos_nombres[id_activo] = activo_general.nombre
 
-    return render_template('activos.html', form=form, activos = activos, usuarios_responsables=usuarios_responsables, departamentos_responsable=departamentos_responsable, activos_nombres=activos_nombres)
+    #categorias
+    categorias = Categoria.query.all()
+    #activos generales
+    act_gemeral = ActivoGeneral.query.all()
+    #marcas
+    marcas = Marca.query.all()
+
+    return render_template('activos.html', form=form, activos = activos, usuarios_responsables=usuarios_responsables, departamentos_responsable=departamentos_responsable, activos_nombres=activos_nombres, categorias=categorias, act_gemeral=act_gemeral, marcas=marcas)
 
 @activo_bp.route('/agregar', methods=['POST'])
 @login_required
