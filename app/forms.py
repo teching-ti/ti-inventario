@@ -50,7 +50,7 @@ class AgregarPersonalForm(FlaskForm):
     usuario = StringField('Usuario', validators=[DataRequired()])
     fecha_registro = DateField('Fecha de Registro', format='%Y-%m-%d', default=datetime.now())
     estado = StringField('Estado', validators=[DataRequired()], default="Activo")
-    fecha_cese = DateField('Fecha de Cese', format='%Y-%m-%d')
+    fecha_cese = DateField('Fecha de Cese', format='%Y-%m-%d', default=datetime(9999, 12, 31))
     celular_personal = StringField('Celular', validators=[DataRequired()])
     
     submit = SubmitField('Agregar')

@@ -24,6 +24,7 @@
                    <th>Modelo</th>
                    <th>Cantidad Disponible</th>
                    <th>Cantidad Total</th>
+                   <th>Edit.</th>
                 </tr>
              </thead>
              <tbody>
@@ -34,6 +35,7 @@
                 <td>{{ activog.modelo }}</td>
                 <td>{{ activog.cantidad_disponible }}</td>
                 <td>{{ activog.cantidad_total }}</td>
+                <td><button class="btn btn-outline-warning btn-editar-activo-general"><i class="fa-solid fa-gear"></i></button></td>
               </tr>
               {% endfor %}
               </tbody>
@@ -183,13 +185,6 @@
     </div>
 
     <style>
-        /*.activos-generales-titulo{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: .5rem;
-        }   */
-
         #form-nombre{
             display: none;
         }
@@ -261,6 +256,18 @@
             });
             return seleccion;
         }
+
+        //funcio para animacion
+        let btnEditarActivo = document.querySelectorAll(".btn-editar-activo-general")
+        btnEditarActivo.forEach(function(e){
+            e.addEventListener("mouseover", function(){
+                e.querySelector("i").classList.add("fa-spin")
+            })
+
+            e.addEventListener("mouseout", function(){
+                e.querySelector("i").classList.remove("fa-spin")
+            })
+        })
     </script>
 
 

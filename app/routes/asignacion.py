@@ -16,11 +16,16 @@ def obtener_usuarios(departamento_id):
 @login_required
 def asignar_activos():
     activos_seleccionados = request.args.get('activos').split(',')
-    form = AsignarPersonalActivoForm(request.form)  # Pasar los datos del formulario al crear la instancia
-    # Traer los datos de todos los departamentos
-    departamentos = Departamento.query.all() 
-    # Cargar las opciones de departamentos en el campo ubicacion
-    form.ubicacion.choices = [(d.id, d.nombre_departamento) for d in departamentos]
+    #si se ingresa a la página sin un activo seleccionado o colocado en la url, se devuelve a la página de activos
+    if(activos_seleccionados[0]==''):
+        return redirect(url_for('activo.listar_activos'))
+    else:
+        form = AsignarPersonalActivoForm(request.form)  # Pasar los datos del formulario al crear la instancia
+        # Traer los datos de todos los departamentos
+        departamentos = Departamento.query.all() 
+        # Cargar las opciones de departamentos en el campo ubicacion
+        form.ubicacion.choices = [(d.id, d.nombre_departamento) for d in departamentos]
+
     return render_template('asignar_activos_un_personal.html', activos_seleccionados=activos_seleccionados, form=form)
 
 @asignacion_bp.route('/guardar_asignacion', methods=['POST'])

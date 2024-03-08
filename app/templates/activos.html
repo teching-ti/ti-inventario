@@ -10,16 +10,16 @@ Listado de Activos
 <div class="table-responsive">
   <table class="table table-hover">
     <thead class="table-dark">
-       <tr>
-          <th></th>
-          <th>N° Serie</th>
-          <th>Activo - Marca - Modelo</th>
-          <th>N° de cargo</th>
-          <th>Ubicacion</th>
-          <th>Responsable</th>
-          <th>Estado</th>
-          <th class="h-acciones">Historial</th>
-       </tr>
+      <tr>
+        <th></th>
+        <th>N° Serie</th>
+        <th>Activo - Marca - Modelo</th>
+        <th>N° de cargo</th>
+        <th>Ubicacion</th>
+        <th>Responsable</th>
+        <th>Estado</th>
+        <th class="h-acciones">Historial</th>
+      </tr>
     </thead>
     <tbody>
       {% for activo in activos %}
@@ -31,14 +31,14 @@ Listado de Activos
       <td>{{ departamentos_responsable.get(activo.ubicacion, activo.ubicacion) }}</td>
       <td>{{ usuarios_responsables.get(activo.responsable, activo.responsable) }}</td>
       <td>{{ activo.estado }}</td>
-      <td class="icon-acciones"><button class="btn btn-success"><i class="fa-solid fa-clipboard-list"></i></button></td>
+      <td class="icon-acciones"><button class="btn btn-warning"><i class="fa-solid fa-clipboard-list"></i></button></td>
     </tr>
     {% endfor %}
     </tbody>
   <table>
- </div>
- <!-- Este boton será el encargado de asignar a un personal los activos marcados -->
- <div class="floating-button">
+</div>
+<!-- Este boton será el encargado de asignar a un personal los activos marcados -->
+<div class="floating-button">
   <button id="btn-asignar" class="btn btn-outline-primary">Asignar Activos</button>
 </div>
 
@@ -117,8 +117,8 @@ Listado de Activos
 </div>
 
 
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filtroModal">
-  Filtrar
+<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#filtroModal" id="abrir-filtro">
+  <i class="fa-solid fa-filter"></i>
 </button>
 
 <!-- Modal de filtro -->
@@ -132,6 +132,21 @@ Listado de Activos
       <div class="modal-body">
         <form id="filtroForm">
           <div class="mb-3">
+            <label for="disponibilidad" class="form-label">Disponibilidad:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="todos" id="todos" name="disponibilidad" checked>
+              <label class="form-check-label" for="disponible">Todos</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="disponible" id="disponible" name="disponibilidad">
+              <label class="form-check-label" for="disponible">Disponible</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="asignado" id="asignado" name="disponibilidad">
+              <label class="form-check-label" for="asignado">Asignado</label>
+            </div>
+          </div>
+          <div class="mb-3">
             <p for="categorias">Categorías:</p>
             <!-- Checkbox para categorías -->
             {% for categoria in categorias %}
@@ -144,17 +159,6 @@ Listado de Activos
             {% for marca in marcas %}
             <label><input type="checkbox" name="marcas" value="{{ marca.nombre_marca }}"> {{ marca.nombre_marca }}</label><br>
             {% endfor %}
-          </div>
-          <div class="mb-3">
-            <label for="disponibilidad" class="form-label">Disponibilidad:</label>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="disponible" id="disponible" name="disponibilidad">
-              <label class="form-check-label" for="disponible">Disponible</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="asignado" id="asignado" name="disponibilidad">
-              <label class="form-check-label" for="asignado">Asignado</label>
-            </div>
           </div>
           <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
         </form>
@@ -181,27 +185,27 @@ Listado de Activos
 
   // Función para actualizar las opciones de modelo basadas en la marca y categoría seleccionadas
   function actualizarOpcionesModelo() {
-      // Se obtiene el valor del texto de la marca y la categoría seleccionadas
-      let marcaValor = campoMarca.options[campoMarca.selectedIndex].text;
-      let categoriaValor = campoCategoria.options[campoCategoria.selectedIndex].text;
+    // Se obtiene el valor del texto de la marca y la categoría seleccionadas
+    let marcaValor = campoMarca.options[campoMarca.selectedIndex].text;
+    let categoriaValor = campoCategoria.options[campoCategoria.selectedIndex].text;
       
-      // Filtrar los modelos basados en la marca y categoría seleccionadas
-      let modelosFiltrados = modelosOriginales.filter(function(modelo){
-          return modelo.innerText.includes(marcaValor) && modelo.innerText.includes(categoriaValor);
-      });
+    // Filtrar los modelos basados en la marca y categoría seleccionadas
+    let modelosFiltrados = modelosOriginales.filter(function(modelo){
+      return modelo.innerText.includes(marcaValor) && modelo.innerText.includes(categoriaValor);
+    });
       
-      // Ocultar todas las opciones de modelos
-      opcionesModelo.forEach(function(opcion){
-          opcion.style.display = 'none';
-      });
+    // Ocultar todas las opciones de modelos
+    opcionesModelo.forEach(function(opcion){
+      opcion.style.display = 'none';
+    });
 
-      // Mostrar solo las opciones de modelos filtradas
-      modelosFiltrados.forEach(function(modelo){
-          modelo.style.display = 'block';
-      });
+    // Mostrar solo las opciones de modelos filtradas
+    modelosFiltrados.forEach(function(modelo){
+      modelo.style.display = 'block';
+    });
 
-      // Limpiar el campo de modelo para evitar que quede el campo seleccionado con anterioridad
-      campoModelo.selectedIndex = 0;
+    // Limpiar el campo de modelo para evitar que quede el campo seleccionado con anterioridad
+    campoModelo.selectedIndex = 0;
   }
 
   /*-----------------*/
@@ -209,16 +213,16 @@ Listado de Activos
   //let campoResponsable = document.getElementById("responsable");
 
   campoUbicacion.addEventListener("change", function(){
-    let campoResponsable = document.getElementById("responsable");
-    campoResponsable.innerHTML = ''
+  let campoResponsable = document.getElementById("responsable");
+  campoResponsable.innerHTML = ''
 
-    // Agregar la opción "Seleccionar Responsable" como la primera opción
-    let optionSeleccionar = document.createElement("option");
-    optionSeleccionar.value = '';
-    optionSeleccionar.text = 'Seleccionar Responsable';
-    campoResponsable.appendChild(optionSeleccionar);
+  // Agregar la opción "Seleccionar Responsable" como la primera opción
+  let optionSeleccionar = document.createElement("option");
+  optionSeleccionar.value = '';
+  optionSeleccionar.text = 'Seleccionar Responsable';
+  campoResponsable.appendChild(optionSeleccionar);
 
-    // Realizar una solicitud al servidor para obtener el personal asociado al departamento seleccionado
+  // Realizar una solicitud al servidor para obtener el personal asociado al departamento seleccionado
     fetch(`/activo/get_personal/${campoUbicacion.value}`)
         .then(response => response.json())
         .then(data => {
@@ -233,12 +237,12 @@ Listado de Activos
   });
 
   // Formularios
-  let categoriaSelect = document.getElementById('categoria');
-  let formContainer = document.getElementById('formContainer');
-  let btnDetalles = document.getElementById("btnDetalles");
+  let categoriaSelect = document.getElementById('categoria')
+  let formContainer = document.getElementById('formContainer')
+  let btnDetalles = document.getElementById("btnDetalles")
 
   categoriaSelect.addEventListener('change', function () {
-    let categoriaId = categoriaSelect.value;
+    let categoriaId = categoriaSelect.value
     // se hace consulta a la ruta mostrada para cargar un formulario
     fetch(`/activo/obtener_formulario_detalles/${categoriaId}`)
       .then(response => response.text())
@@ -249,7 +253,6 @@ Listado de Activos
 
     let num_serie_id = document.getElementById("num_serie")
     num_serie_id.addEventListener("change", function(){
-      
       document.getElementById("segundoFormulario").setAttribute("action", `/activo/guardar_detalles/${num_serie_id.value}/${categoriaId}`);
     })
   });
@@ -262,82 +265,105 @@ Listado de Activos
     enviarFormulario(segundoFormulario)
 
     function enviarFormulario(formulario) {
-    // Crear un objeto FormData con los datos del formulario
-    let formData = new FormData(formulario);
+      // Crear un objeto FormData con los datos del formulario
+      let formData = new FormData(formulario);
     
-    // Realizar la solicitud fetch con los datos del formulario
-    fetch(formulario.action, {
+      // Realizar la solicitud fetch con los datos del formulario
+      fetch(formulario.action, {
         method: 'POST',
         body: formData
-    })
-    .then(response => {
+      })
+      .then(response => {
         if (!response.ok) {
-            throw new Error('Error al enviar el formulario');
+          throw new Error('Error al enviar el formulario');
         }
         // Manejar la respuesta si es necesario
         return response.json(); // O response.text(), dependiendo del tipo de respuesta esperada
-    })
-    .then(data => {
+      })
+      .then(data => {
         // Hacer algo con la respuesta si es necesario
         console.log(data);
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error('Error:', error);
-    });
-  }
-});
+      });
+    }
+  });
 
   // Las líneas siguientes se encargan de enviar a la ruta indicada los activos que hayan sido seleccionados
   let btnAsignar = document.getElementById('btn-asignar');
 
   // Agregar un evento clic al botón "Asignar Activos"
   btnAsignar.addEventListener('click', function() {
-      // Obtener todos los checkboxes seleccionados
-      let checkboxes = document.querySelectorAll('input[name="activos_seleccionados"]:checked');
+    // Obtener todos los checkboxes seleccionados
+    let checkboxes = document.querySelectorAll('input[name="activos_seleccionados"]:checked');
+
+    //if(checkboxes.length!=0){
       let activosSeleccionados = [];
 
       // Obtener los valores de los activos seleccionados
       checkboxes.forEach(function(checkbox) {
-          activosSeleccionados.push(checkbox.value);
+        activosSeleccionados.push(checkbox.value);
       });
 
       // Redirigir a la ruta de asignación de activos con los activos seleccionados como parámetros
       window.location.href = '/asignacion/asignar_activos?activos=' + activosSeleccionados.join(',');
+    /*}else{
+      alert("Debe seleccionar activos para poder realizar una asignación desea asignar")
+    }*/
+    
   });
 
-    // Filtro
-    document.getElementById('filtroForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      filtrarResultados();
-      $('#filtroModal').modal('hide');
-    });
+  // Filtro
+  document.getElementById('filtroForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    filtrarResultados();
+    $('#filtroModal').modal('hide');
+  });
 
-    function filtrarResultados() {
-    let categoriasSeleccionadas = obtenerSeleccion('categorias');
-    let marcasSeleccionadas = obtenerSeleccion('marcas');
-    let disponibilidadSeleccionada = obtenerSeleccion('disponibilidad');
-
+  // función de filtrado
+  function filtrarResultados() {
+    // se obteienen las categorias, marcas y disponibilidad
+    let categoriasSeleccionadas = obtenerSeleccion('categorias'); //arreglo
+    let marcasSeleccionadas = obtenerSeleccion('marcas'); //arreglo
+    let disponibilidadSeleccionada = obtenerSeleccion('disponibilidad'); //arreglo
+    //se obtiene cada una de las filas
     let filas = document.querySelectorAll('tbody tr');
+    //se itera sobre cada una  de las filas
     filas.forEach(function(fila) {
-        let activoMarcaModelo = fila.querySelector('td:nth-child(3)').textContent;
-        let disponibilidadEnFila = fila.querySelector('td:nth-child(6)').textContent; // Columna de disponibilidad
-
-        let [categoriaEnFila, marcaEnFila] = activoMarcaModelo.split(' - ');
-        let categoriaCoincide = categoriasSeleccionadas.includes(categoriaEnFila) || categoriasSeleccionadas.includes('todos');
-        let marcaCoincide = marcasSeleccionadas.includes(marcaEnFila) || marcasSeleccionadas.includes('todos');
-        let disponibilidadCoincide = disponibilidadSeleccionada === 'todos' || disponibilidadEnFila.includes('Almacen De TI Teching');
-        let asignadoCoincide = disponibilidadSeleccionada === 'asignado';
-
-        if ((categoriasSeleccionadas.length === 0 || categoriaCoincide) && 
-            (marcasSeleccionadas.length === 0 || marcaCoincide)  && 
-            (disponibilidadSeleccionada === 'todos' || disponibilidadCoincide)) {
-            fila.style.display = 'table-row';
-        } else {
-            fila.style.display = 'none';
-        }
+      //se obtiene el texto de la tercera columna de la fila, que es donde se encuentra el texto de marca, categoria, modelo
+      let activoMarcaModelo = fila.querySelector('td:nth-child(3)').textContent;
+      //se obtiene el texto de la sexta columna de la fila, que es donde se encuentra el nombre de la persona a la que se le ha asignado el activo
+      let disponibilidadEnFila = fila.querySelector('td:nth-child(6)').textContent;
+      //se divide el texto de la tercera columna en categoría y marca
+      let [categoriaEnFila, marcaEnFila] = activoMarcaModelo.split(' - ');
+      //se verificar si la categoría y la marca de la fila coinciden con las selecciones realizadas,
+      //o si no se ha seleccionado ninguna categoría o marca (en ese caso, se considera automáticamente coincidente)
+      let categoriaCoincide = categoriasSeleccionadas.length === 0 || categoriasSeleccionadas.includes(categoriaEnFila);
+      let marcaCoincide = marcasSeleccionadas.length === 0 || marcasSeleccionadas.includes(marcaEnFila);
+      //se inicializa la variable disponibilidad coincide
+      let disponibilidadCoincide = false;
+      //verifica si el activo está disponible según lo seleccionado
+      if (disponibilidadSeleccionada.includes('todos')) {
+        //si se selecciona todos, se consideraría que coincide
+        disponibilidadCoincide = true;
+      } else if (disponibilidadSeleccionada.includes('disponible')) {
+        //si se selecciona "disponible", se verifica si la fila contiene el texto específico de disponibilidad
+        disponibilidadCoincide = disponibilidadEnFila.includes('Almacen De TI Teching');
+      } else if (disponibilidadSeleccionada.includes('asignado')) {
+        //si se selecciona "asignado", se verifica lo contrario a "disponible"
+        disponibilidadCoincide = !disponibilidadEnFila.includes('Almacen De TI Teching');
+      }
+      // se evalúa que debería de mostrarse u ocultarse en base a los crierios de selección
+      if (categoriaCoincide && marcaCoincide && disponibilidadCoincide) {
+        fila.style.display = 'table-row';
+      } else {
+        fila.style.display = 'none';
+      }
     });
-}
+  }
 
+  // función para guardar tododos los checkbox en un arreglo
   function obtenerSeleccion(nombreCheckbox) {
     let seleccion = [];
     let checkboxes = document.querySelectorAll('input[name="' + nombreCheckbox + '"]:checked');
@@ -346,6 +372,19 @@ Listado de Activos
     });
     return seleccion;
   }
+
+  // función colocar como desactivados los checkboxes de los activos que no estén disponibles
+  function reconocerActivosAsignados(){
+    let filas = document.querySelectorAll("tbody tr")
+    filas.forEach(function(e){
+      if(e.children[5].textContent!="Almacen De TI Teching"){
+        //console.log(e.querySelector("input").value)
+        e.querySelector("input").setAttribute("disabled", "true")
+      }
+    })
+  }
+
+  reconocerActivosAsignados()
 </script>
 
 <style>
@@ -374,6 +413,15 @@ Listado de Activos
 
   .icon-acciones{
     text-align: center;
+  }
+
+  #abrir-filtro{
+    position: fixed;
+    border-radius: 50%;
+    height: 40px; 
+    right: 30px;
+    bottom: 190px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
   }
 </style>
 {% endblock %}
