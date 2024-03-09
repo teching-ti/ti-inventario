@@ -23,7 +23,7 @@
          <td>{{ empleado.departamento.nombre_departamento }}</td>
          <td>{{ empleado.cargo.nombre_cargo }}</td>
          <td><a href="{{ url_for('personal.asignar_activo', empleado_id=empleado.id_dni) }}"><i class="fa-solid fa-cubes fa-lg"></i></a></td>
-         <td><button class="btn btn-success btn-edit-personal"><i class="fa-solid fa-user-pen"></i></button></td>
+         <td><button class="btn btn-success btn-edit-personal" data-bs-toggle="modal" data-bs-target="#editarPersonalModal"><i class="fa-solid fa-user-pen"></i></button></td>
       </tr>
       {% endfor %}
       </tbody>
@@ -41,7 +41,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
          <div class="modal-body">
-            <form method="POST" action="{{ url_for('personal.agregar_personal') }}">
+            <form method="POST" class="form" action="{{ url_for('personal.agregar_personal') }}">
                {{ form.hidden_tag() }}
                <div class="row">
                   <div class="col">
@@ -105,7 +105,82 @@
       </div>
    </div>
 </div>
-    
+
+<!-- Modal para editar personal -->
+<div class="modal fade" id="editarPersonalModal" tabindex="-1" aria-labelledby="editarPersonalModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="editarPersonalModalLabel">Editar datos del personal</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+
+            <form method="POST" class="form2">
+               {{ form2.hidden_tag() }}
+               <div class="row">
+                  <div class="col">
+                     {{ form2.id_dni.label(class="form-label") }} 
+                     {{ form2.id_dni(class="form-control id_dni", readonly=True) }}
+                  </div>
+                  <div class="col">
+                     {{ form2.nombres.label(class="form-label") }}
+                     {{ form2.nombres(class="form-control nombres") }}
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col">
+                     {{ form2.apellido_p.label(class="form-label") }} 
+                     {{ form2.apellido_p(class="form-control apellido_p") }}
+                  </div>
+                  <div class="col">
+                     {{ form2.apellido_m.label(class="form-label") }} 
+                     {{ form2.apellido_m(class="form-control apellido_m") }}
+                  </div>
+               </div>
+               <div class="form-group">
+                  {{ form2.nombres_completos.label(class="form-label") }} 
+                  {{ form2.nombres_completos(class="form-control nombres_completos", readonly=True) }}
+               </div>
+               <div class="row">
+                  <div class="col">
+                     {{ form2.celular_personal.label(class="form-label") }} 
+                     {{ form2.celular_personal(class="form-control celular_personal") }}
+                  </div>
+                  <div class="col">
+                     {{ form2.usuario.label(class="form-label") }} 
+                     {{ form2.usuario(class="form-control usuario") }}
+                  </div>
+               </div>
+               <div class="form-group">
+                  {{ form2.departamento_id.label(class="form-label") }}
+                  {{ form2.departamento_id(class="form-control departamento_id") }}
+               </div>
+               <div class="form-group">
+                  {{ form2.cargo_id.label(class="form-label") }} 
+                  {{ form2.cargo_id(class="form-control cargo_id") }}
+               </div>
+               <div class="form-group">
+                  {{ form2.fecha_registro.label(class="form-label") }} 
+                  {{ form2.fecha_registro(class="form-control fecha_registro") }}
+               </div>
+               <div class="form-group">
+                  {{ form2.estado.label(class="form-label") }} 
+                  {{ form2.estado(class="form-control estado") }}
+               </div>
+               <div class="form-group">
+                  {{ form2.fecha_cese.label(class="form-label") }} 
+                  {{ form2.fecha_cese(class="form-control fecha_cese") }}
+               </div>
+               <button type="submit" class="btn btn-primary mt-3">
+                  Guardar Cambios   
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
 <script>
    //Autocompletado el input nombres completos
    document.addEventListener("DOMContentLoaded", function () {
@@ -151,9 +226,31 @@
    let botones = document.querySelectorAll(".btn-edit-personal")
    botones.forEach(function(e){
       e.addEventListener("click", function(){
-         // de esta forma ya se cuenta con la primary key del personal
-         // se procede a abrir el modal con esta info
-         alert(`Editando datos del personal: ${e.closest("tbody tr").children[0].textContent}`)
+         let activoId = e.closest("tbody tr").children[0].textContent
+         //cargar los datos en el formulario por petinción ajax
+         document.querySelector(".form2").setAttribute("action", `/personal/editar_personal/${activoId}`)
+         //console.log(document.querySelector(".form2"))
+
+         fetch(`/personal/obtener_datos_personal/${activoId}`)
+            .then(response => response.json())
+            .then(data=>{
+               document.querySelector(".id_dni").value=data.id_dni
+               document.querySelector(".nombres").value=data.nombres
+               document.querySelector(".apellido_p").value=data.apellido_p
+               document.querySelector(".apellido_m").value=data.apellido_m
+               document.querySelector(".nombres_completos").value=data.nombres_completos
+               document.querySelector(".celular_personal").value=data.celular_personal
+               document.querySelector(".usuario").value=data.usuario
+               // Se debe cargar también el select con todos los datos posibles a seleccinar para su modificación
+               // y también se debe marcar o cargar por defecto la información que ya se tiene registrada
+
+               /*document.querySelector(".departamento_id").value = data.departamento_id
+               document.querySelector(".cargo_id").value = data.cargo_id*/
+               console.log(data)
+            })
+            .catch(error=>{
+               console.error('Error json', error)
+            })
       })
    })
 

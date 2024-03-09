@@ -65,6 +65,23 @@ class AgregarPersonalForm(FlaskForm):
         #agrega las opciones de cargos
         self.cargo_id.choices = [(cargo.id, cargo.nombre_cargo) for cargo in Cargo.query.all()]
 
+#formulario para realizar edición
+class EditarPersonalForm(FlaskForm):
+    id_dni = StringField('DNI', validators=[DataRequired()])
+    departamento_id = SelectField('Departamento', coerce=int, validators=[DataRequired()])
+    cargo_id = SelectField('Cargo', coerce=int, validators=[DataRequired()])
+    apellido_p = StringField('Apellido Paterno', validators=[DataRequired()])
+    apellido_m = StringField('Apellido Materno', validators=[DataRequired()])
+    nombres = StringField('Nombres', validators=[DataRequired()])
+    nombres_completos = StringField('Nombres Completos', validators=[DataRequired()])
+    usuario = StringField('Usuario', validators=[DataRequired()])
+    fecha_registro = DateField('Fecha de Registro', format='%Y-%m-%d')
+    estado = StringField('Estado', validators=[DataRequired()])
+    fecha_cese = DateField('Fecha de Cese', format='%Y-%m-%d')
+    celular_personal = StringField('Celular', validators=[DataRequired()])
+    
+    submit = SubmitField('Actualizar')
+    
 #formulario para agregar categorias
 class AgregarCategoriaForm(FlaskForm):
     nombre_categoria = StringField('Nombre Categoría', validators=[DataRequired()])
